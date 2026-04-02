@@ -3,9 +3,12 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Header } from './components/Header';
 import { ProjectMeta } from './components/ProjectMeta';
 import { TrackerGrid } from './components/TrackerGrid';
+import { CalendarView } from './components/calendar';
 import { EmptyState } from './components/EmptyState';
 import { ProjectSetupModal } from './components/ProjectSetupModal';
 import { ProjectList } from './components/ProjectList';
+import { DataManagePanel } from './components/DataManagePanel';
+import { MilestoneCelebration } from './components/MilestoneCelebration';
 import { useProjectStore } from './store/projectStore';
 import type { ProjectColor } from './types';
 
@@ -23,7 +26,9 @@ function App() {
   const [isSetupModalOpen, setIsSetupModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isProjectListOpen, setIsProjectListOpen] = useState(false);
+  const [isDataManageOpen, setIsDataManageOpen] = useState(false);
   const [editingProjectId, setEditingProjectId] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'calendar'>('grid');
 
   const activeProject = getActiveProject();
   const hasProject = projects.length > 0;
@@ -92,7 +97,10 @@ function App() {
         }}
         onCreateNew={() => setIsSetupModalOpen(true)}
         onManageProjects={() => setIsProjectListOpen(true)}
+        onDataManage={() => setIsDataManageOpen(true)}
         hasProject={hasProject}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
       />
 
       <main className="container mx-auto px-4 py-6 sm:py-8 max-w-4xl">
@@ -109,18 +117,42 @@ function App() {
               {/* 项目元信息和进度 */}
               <ProjectMeta />
 
-              {/* 打卡网格 */}
-              <TrackerGrid />
+              {/* 视图内容 - 网格或日历 */}
+              <AnimatePresence mode="wait">
+                {viewMode === 'grid' ? (
+                  <motion.div
+                    key="grid"
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 20 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <TrackerGrid />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="calendar"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <CalendarView />
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {/* 底部提示 */}
-              <motion.div
-                className="text-center text-sm text-slate-400 dark:text-slate-500"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.5 }}
-              >
-                💡 点击格子记录进度，右键可添加备注
-              </motion.div>
+              {viewMode === 'grid' && (
+                <motion.div
+                  className="text-center text-sm text-slate-400 dark:text-slate-500"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  💡 点击格子记录进度，右键可添加备注
+                </motion.div>
+              )}
             </motion.div>
           ) : (
             <motion.div
@@ -231,6 +263,15 @@ function App() {
         onCreateNew={() => setIsSetupModalOpen(true)}
         onEdit={handleEditProject}
       />
+
+      {/* 数据管理面板 */}
+      <DataManagePanel
+        isOpen={isDataManageOpen}
+        onClose={() => setIsDataManageOpen(false)}
+      />
+
+      {/* 里程碑庆祝动画 */}
+      <MilestoneCelebration />
     </div>
   );
 }

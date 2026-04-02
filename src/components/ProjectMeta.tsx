@@ -20,8 +20,48 @@ function ProgressBar({ percentage, color }: ProgressBarProps) {
   );
 }
 
+interface StreakBadgeProps {
+  currentStreak: number;
+  longestStreak: number;
+}
+
+function StreakBadge({ currentStreak, longestStreak }: StreakBadgeProps) {
+  return (
+    <div className="flex items-center gap-4 mt-4">
+      {/* 当前连续 */}
+      <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-orange-100 dark:bg-orange-900/30">
+          <span className="text-lg">🔥</span>
+        </div>
+        <div>
+          <div className="text-lg font-bold text-slate-900 dark:text-white">
+            {currentStreak}
+          </div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">连续打卡</div>
+        </div>
+      </div>
+
+      {/* 分隔线 */}
+      <div className="h-8 w-px bg-slate-200 dark:bg-slate-700" />
+
+      {/* 最长记录 */}
+      <div className="flex items-center gap-2">
+        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-yellow-100 dark:bg-yellow-900/30">
+          <span className="text-lg">🏆</span>
+        </div>
+        <div>
+          <div className="text-lg font-bold text-slate-900 dark:text-white">
+            {longestStreak}
+          </div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">最长记录</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function ProjectMeta() {
-  const { getActiveProject, getProgress, getDaysSinceStart } = useProjectStore();
+  const { getActiveProject, getProgress, getDaysSinceStart, getStreakInfo } = useProjectStore();
 
   const project = getActiveProject();
 
@@ -29,6 +69,7 @@ export function ProjectMeta() {
 
   const { completed, total, percentage } = getProgress();
   const daysElapsed = getDaysSinceStart();
+  const streakInfo = getStreakInfo();
 
   // 颜色映射
   const colorMap: Record<string, string> = {
@@ -94,6 +135,14 @@ export function ProjectMeta() {
         </div>
         <ProgressBar percentage={percentage} color={colorMap[project.color] || 'bg-emerald-500'} />
       </div>
+
+      {/* 连续打卡统计 */}
+      {(streakInfo.currentStreak > 0 || streakInfo.longestStreak > 0) && (
+        <StreakBadge
+          currentStreak={streakInfo.currentStreak}
+          longestStreak={streakInfo.longestStreak}
+        />
+      )}
     </div>
   );
 }

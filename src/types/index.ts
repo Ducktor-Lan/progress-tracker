@@ -80,3 +80,63 @@ export const colorConfig: Record<ProjectColor, { bg: string; hover: string; ring
     ring: 'ring-orange-500',
   },
 };
+
+// ==================== 日历相关类型 ====================
+
+// 日历单日数据
+export interface CalendarDay {
+  date: Date;              // 日期对象
+  dateKey: string;         // "YYYY-MM-DD" 格式
+  isToday: boolean;        // 是否今天
+  isFuture: boolean;       // 是否未来日期
+  isBeforeStart: boolean;  // 是否在项目开始日期之前
+  isCurrentMonth: boolean; // 是否当前月份
+  records: RecordEntry[];  // 当日打卡记录
+  count: number;           // 打卡次数
+}
+
+// 日历月份数据
+export interface CalendarMonth {
+  year: number;
+  month: number;
+  weeks: CalendarDay[][];  // 按周分组的日期
+}
+
+// 连续打卡统计
+export interface StreakInfo {
+  currentStreak: number;   // 当前连续天数
+  longestStreak: number;   // 最长连续天数
+  lastCheckIn: string;     // 最后打卡日期 "YYYY-MM-DD"
+}
+
+// 周统计
+export interface WeeklyStats {
+  weekStart: string;       // 周开始日期
+  weekEnd: string;         // 周结束日期
+  dailyCounts: number[];   // 每天打卡数 (周日到周六)
+  totalCount: number;      // 周总打卡数
+}
+
+// ==================== 数据导出导入类型 ====================
+
+// 导出数据格式
+export interface ExportData {
+  version: string;
+  exportedAt: string;
+  projects: Project[];
+  settings: {
+    isDarkMode: boolean;
+  };
+}
+
+// ==================== 里程碑类型 ====================
+
+// 里程碑定义
+export interface Milestone {
+  percentage: number;      // 里程碑百分比 (25, 50, 75, 100)
+  reached: boolean;        // 是否已达成
+  reachedAt?: string;      // 达成时间
+}
+
+// 预设里程碑
+export const DEFAULT_MILESTONES = [25, 50, 75, 100] as const;

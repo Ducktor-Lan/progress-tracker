@@ -4,14 +4,20 @@ interface HeaderProps {
   onSettingsClick: () => void;
   onCreateNew: () => void;
   onManageProjects: () => void;
+  onDataManage: () => void;
   hasProject: boolean;
+  viewMode: 'grid' | 'calendar';
+  onViewModeChange: (mode: 'grid' | 'calendar') => void;
 }
 
 export function Header({
   onSettingsClick,
   onCreateNew,
   onManageProjects,
+  onDataManage,
   hasProject,
+  viewMode,
+  onViewModeChange,
 }: HeaderProps) {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm">
@@ -50,6 +56,40 @@ export function Header({
 
         {/* Actions */}
         <div className="flex items-center gap-2">
+          {/* 视图切换按钮组 */}
+          {hasProject && (
+            <div className="flex items-center bg-slate-100 dark:bg-slate-700 rounded-lg p-0.5">
+              <button
+                onClick={() => onViewModeChange('grid')}
+                className={`p-1.5 rounded-md transition-colors ${
+                  viewMode === 'grid'
+                    ? 'bg-white dark:bg-slate-600 text-emerald-600 dark:text-emerald-400 shadow-sm'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                }`}
+                aria-label="Grid view"
+                title="网格视图"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+              </button>
+              <button
+                onClick={() => onViewModeChange('calendar')}
+                className={`p-1.5 rounded-md transition-colors ${
+                  viewMode === 'calendar'
+                    ? 'bg-white dark:bg-slate-600 text-emerald-600 dark:text-emerald-400 shadow-sm'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
+                }`}
+                aria-label="Calendar view"
+                title="日历视图"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </button>
+            </div>
+          )}
+
           {/* 新建项目按钮 */}
           <button
             onClick={onCreateNew}
@@ -103,6 +143,23 @@ export function Header({
                 strokeLinejoin="round"
                 strokeWidth={2}
                 d="M4 6h16M4 10h16M4 14h16M4 18h16"
+              />
+            </svg>
+          </button>
+
+          {/* 数据管理按钮 */}
+          <button
+            onClick={onDataManage}
+            className="p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-800 transition-colors"
+            aria-label="Data management"
+            title="数据管理"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"
               />
             </svg>
           </button>
